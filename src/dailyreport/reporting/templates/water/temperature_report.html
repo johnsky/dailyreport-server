@@ -1,0 +1,114 @@
+{% load custom %}
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title> {{ report_title }} </title>
+    <style type="text/css">
+        {% if to_pdf %}
+        body 
+        {
+          font-family: "Times New Roman";
+          /*font-size: 200%;*/
+        }
+        
+        @font-face {
+          font-family: "Times New Roman"; 
+          src: url( {{font_path}}/DejaVuSans.ttf );
+        }
+        {% else %}
+        body
+        {
+            margin: 10pt;
+        }
+        {% endif %}
+        
+        #report_title
+        {
+            font-weight: bold;
+            /*text-align: center;*/
+            font-size: large;
+        }
+
+        table
+        {
+            /*width: 2000px;*/
+            margin: 10pt;
+            border-spacing: 1px;
+            border-collapse: collapse;
+            border-style: inset;
+            border-color: #CCCCCC;
+        }
+        
+        table td 
+        {
+            /*background-color: white;*/
+            border-style: inset;
+            padding: 5px;
+            border-width: 1px;
+            border-color: #CCCCCC;
+            vertical-align: middle;
+        }
+
+        table th 
+        {
+            /*background-color: white;*/
+            border-style: inset;
+            padding: 5px;
+            border-width: 1px;
+            border-color: #CCCCCC;
+            font-size: medium;
+            font-weight: bold;
+            height: 3em;
+        }
+        
+        .center
+        {
+          text-align:center;
+        }
+        
+        .bold
+        {
+          font-weight:bold;
+        }
+        
+        
+
+    </style>
+
+</head>
+<body>
+  <h1 class="bold" id="report_title">{{report_name}} за {{ date }}</h1>
+  {% autoescape off %}
+  <table>
+    <thead>
+      <tr>
+        <th>Филиал/Тепловой район</th>
+        <th>Температура наружная, &deg;C</th>
+        <th>Расчетная температура пр./обр. сетевой воды, &deg;C</th> 
+        <th>Фактическая температура пр./обр. сетевой воды, &deg;C</th>
+        <th>Проблемные вопросы</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      {% if item.is_branch %}
+      <tr>
+          <td class="bold" colspan="4">{{ item.name }}</td>
+      </tr>
+      {% else %}
+      <tr>
+          <td>{{ item.name }}</td>
+          <td class="center">{{ item.outdoor_temp_actual|floatformat:0 }}</td>
+          <td class="center">{{ item.farward_temperature_estimated|floatformat:0 }} / {{item.backward_temperature_estimated|floatformat:0}}</td>
+          <td class="center">{{ item.farward_temperature_actual|floatformat:0 }} / {{item.backward_temperature_actual|floatformat:0}}</td>
+          <td class="center"></td>
+      </tr>
+      {% endif%}
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endautoescape %}
+  
+</body>
+</html>

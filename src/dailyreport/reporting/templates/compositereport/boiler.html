@@ -1,0 +1,216 @@
+{% load custom %}
+
+{% autoescape off %}
+
+{% for line in lines %}
+<tr>
+    <td> {{ date }} </td>
+    
+    {# Если количество строк больше 1 тогда объединяем их #}
+    {% if rows_number > 1 %}
+    {% if forloop.first %}
+    {# Филиал #}
+    {# 1 #}
+    <td class="{{line|colorize}}" rowspan="{{rows_number}}">{{line.branch}}</td>
+
+    {# Тепловой район #}
+    <td class="{{line|colorize}}" rowspan="{{rows_number}}">{{line.thermal}}</td>
+
+    {# Котельная #}
+    <td class="{{line|colorize}}" rowspan="{{rows_number}}">{{line.boiler}}</td>
+    {% endif %}
+
+    {% else %}
+    {# Филиал #}
+    {# 1 #}
+    <td class="{{line|colorize}}">{{line.branch}}</td>
+
+    {# Тепловой район #}
+    {# 2 #}
+    <td class="{{line|colorize}}">{{line.thermal}}</td>
+
+    {# Котельная #}
+    {# 3 #}
+    <td class="{{line|colorize}}">{{line.boiler}}</td>
+    {% endif %}
+
+    {% if has_fuel %}
+
+    {# Вид топлива #}
+    {# 4 #}
+    <td>{{line.fuel_type|default_if_none:""}}</td>
+
+    {# Марка угля #}
+    {# 5 #}
+    <td>{{line.fuel_mark|default_if_none:""}}</td>
+
+    {# Фактический топливный эквивалент #}
+    {# 6 #}
+    <td>{{ line.fuel_actual_eqv|float_delimeter:report_delimiter }}</td>
+
+    {# План. топливный эквивалент #}
+    {# 7 #}
+    <td>{{ line.fuel_plan_eqv|float_delimeter:report_delimiter }}</td>
+
+    <!-- Температура наружного воздуха -->
+    {% if forloop.first %}
+    {# Температура наружн. воздуха - факт #}
+    {# 8 #}
+    <td rowspan="{{rows_number}}">{{ line.outdoor_temp_actual|float_delimeter:report_delimiter }}</td>
+
+    {# Температура наружн. воздуха - план #}
+    {# 9 #}
+    <td rowspan="{{rows_number}}">{{ line.outdoor_temp_plan|float_delimeter:report_delimiter }}</td>
+    {% endif %}
+
+    <!-- Остаток топлива на 1-е число месяца, т -->
+    {# Остаток топлива на 1-е число месяца, т #}
+    {# 10 #}
+    <td>{{ line.remain_first_day_month|float_delimeter:report_delimiter }}</td>
+
+    <!-- Приход топлива -->
+    {# Приход топлива за сутки, т #}
+    {# 11 #}
+    <td>{{ line.income_today|float_delimeter:report_delimiter }}</td>
+
+    {# Приход топлива всего за месяц, т #}
+    {# 12 #}
+    <td>{{ line.income_month|float_delimeter:report_delimiter }}</td>
+
+    <!-- Расход топлива (Т.У.Т.) -->
+    {# Факт. за сутки, т #}
+    {# 13 #}
+    <td>{{ line.fuel_actual_day_with_eqv|float_delimeter:report_delimiter }}</td>
+
+    {# План за сутки, т  #}
+    {# 14 #}
+    <td>{{ line.fuel_plan_day_with_eqv|float_delimeter:report_delimiter }}</td>
+
+    <!-- Расход топлива (Т.Н.Т.) -->
+    {# Факт. за сутки (Расход топлива Т.Н.Т.) #}
+    {# 15 #}
+    <td>{{ line.fuel_actual_day|float_delimeter:report_delimiter }}</td>
+
+     {# План за сутки (Расход топлива Т.Н.Т.) #}
+    <td>{{ line.fuel_plan_day|float_delimeter:report_delimiter }}</td>
+
+    {# Плановый с учетом фактич. Топл. Экв.  и  Темпер. Н.В за сутки #}
+    <td>{{ line.real_plan_day|float_delimeter:report_delimiter }}</td>
+
+    {# Факт. за месяц (Расход топлива) #}
+    <td>{{ line.fuel_actual_month|float_delimeter:report_delimiter }}</td>
+
+    {# План. за месяц (Расход топлива) #}
+    <td>{{ line.fuel_plan_month|float_delimeter:report_delimiter }}</td>
+
+    {# План. за месяц, накопительно(Расход топлива) #}
+    <td>{{ line.fuel_plan_month_sum|float_delimeter:report_delimiter }}</td>
+
+    {# Плановый с учетом фактич. Топл. Экв.  и  Темпер. Н.В за месяц #}
+    <td>{{ line.real_plan_sum|float_delimeter:report_delimiter }}</td>
+
+    <!-- Самовывоз, т -->
+    {# Самовывоз, т #}
+    <td>{{ line.fuel_pickup|float_delimeter:report_delimiter }}</td>
+
+    {# Самовывоз (накопительно), т #}
+    <td>{{ line.fuel_pickup_sum_period|float_delimeter:report_delimiter }}</td>
+
+    <!-- Корректировка за месяц, т-->
+    {# Корректировка за месяц (ТНТ) #}
+    <td>{{ line.fuel_correct|float_delimeter:report_delimiter }}</td>
+
+    <!-- Остатки топлива на отчетную дату -->
+    {# Остаток топлива на отчетную дату, т #}
+    <td>{{ line.remain_tonnes|float_delimeter:report_delimiter }}</td>
+
+    {# Остаток топлива на отчетную дату, в днях #}
+    <td>{{ line.remain_days|float_delimeter:report_delimiter }}</td>
+
+    <!-- Экономия(+)/перерасход(-) за сутки -->
+    {# Экономия(+)/перерасход(-) за сутки #}
+    <td class='{{ line|deviation:"fuel_diff_day" }}'>{{ line.fuel_diff_day|float_delimeter:report_delimiter }}</td>
+
+    {# Экономия(+)/перерасход(-) за месяц #}
+    <td class='{{ line|deviation:"fuel_diff_month" }}'>{{ line.fuel_diff_month|float_delimeter:report_delimiter }}</td>
+
+    <!-- Показания УУТЭ (Гкал) -->
+    {# Показания УУТЭ (Гкал) #}
+    <td>{{ line.energy_value|float_delimeter:report_delimiter }}</td>
+
+    {# Показания УУТЭ накопительно (Гкал) #}
+    <td>{{ line.energy_value_month|float_delimeter:report_delimiter }}</td>
+    {% endif%}
+    
+    {% if has_water %}  
+    <!-- Расход воды(м3) -->
+    {# Категория расхода воды #}
+    {# 30 #}
+    <td>{{ line.water_category_name|default_if_none:"" }}</td>
+
+    {# Расход воды, факт(м3) #}
+    <td>{{ line.water_actual_day|float_delimeter:report_delimiter }}</td>
+
+    {# Расход воды, план(м3) #}
+    <td>{{ line.water_plan_day|float_delimeter:report_delimiter }}</td>
+
+    {# Расход воды, отклонение за сутки, м3 #}
+    <td class='{{ line|deviation:"water_diff_day"}}'>{{ line.water_diff_day|float_delimeter:report_delimiter }}</td>
+
+    {# Расход воды - Факт за месяц (накопительно), м3 #}
+    <td>{{ line.water_actual_month|float_delimeter:report_delimiter }}</td>
+
+    {# Расход воды - План накопительный, м3 #}
+    <td>{{ line.water_plan_sum|float_delimeter:report_delimiter }}</td>
+    
+    {# Расход воды - План за месяц, м3 #}
+    <td>{{ line.water_plan_month|float_delimeter:report_delimiter }}</td>
+    
+    {# Расход воды - Отклонение за месяц, м3 #}
+    <td class='{{ line|deviation:"water_diff_month"}}'>{{ line.water_diff_month|float_delimeter:report_delimiter }}</td>
+
+    {# Температура прямой(расчетная), &deg;C #}
+    <td>{{ line.water_farward_temperature_estimated|float_delimeter:report_delimiter }}</td>
+    
+    {# Температура обратной(расчетная), &deg; C#}
+    <td>{{ line.water_backward_temperature_estimated|float_delimeter:report_delimiter }}</td>
+    
+    {# Температура прямой(факт), &deg;C #}
+    <td>{{ line.water_farward_temperature_actual|float_delimeter:report_delimiter }}</td>
+    
+    {# Температура обратной(факт), &deg;C #}
+    <td>{{ line.water_backward_temperature_actual|float_delimeter:report_delimiter }}</td>
+    
+    {# Отклонение прямой, &deg;C #}
+    <td>{{ line.water_farward_temperature_diff|float_delimeter:report_delimiter }}</td>
+    
+    {# Отклонение обратной, &deg;C #}
+    <td>{{ line.water_backward_temperature_diff|float_delimeter:report_delimiter }}</td>
+    {% endif%}
+    
+    {% if has_electricity %}
+    <!-- Расход электроэнергии -->
+    {# План потребления электр. на месяц, кВтч #}
+    {# 37 #}
+    <td>{{ line.elec_plan_month|float_delimeter:report_delimiter }}</td>
+
+    {# План среднесуточного потребления электроэнергии, кВтч #}
+    <td>{{ line.elec_plan_day|float_delimeter:report_delimiter }}</td>
+
+    {# Факт суточного потребления электр., кВтч #}
+    <td>{{ line.elec_actual_day|float_delimeter:report_delimiter }}</td>
+
+    {# Плановое потребление электр. с начала месяца, кВтч #}
+    <td>{{line.elec_plan_sum_period|float_delimeter:report_delimiter }}</td>
+     
+    {# Фактическое потребление электр. с начала месяца, кВтч #}
+    <td>{{ line.elec_actual_sum_period|float_delimeter:report_delimiter }}</td>
+
+    {# Отклонение факт. от план. с начала месяца, % #}
+    <td class='{{ line|deviation:"elec_diff_period_percent"}}'>{{ line.elec_diff_period_percent|float_delimeter:report_delimiter }}</td>
+    {% endif%}
+</tr>
+
+
+{% endfor %}
+{% endautoescape %}

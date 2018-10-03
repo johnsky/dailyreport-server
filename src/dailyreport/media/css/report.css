@@ -1,0 +1,71 @@
+body
+{
+    margin: 10pt;
+}
+
+.verticaltext{
+    /*For Webkit*/
+    -webkit-transform: rotate(-90deg);
+    /*For Firefox*/
+    -moz-transform: rotate(-90deg);
+    /*For IE*/
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+
+.report_title
+{
+    font-weight: bold;
+    text-align: center;
+}
+
+.report_table
+{
+    width: 2000px;
+    margin: 10pt;
+    background-color: black; 
+}
+
+.table_header_1 th
+{
+    height: 3em;
+    /*background-color: #F2F2F2;*/
+    background-color: #ffffff;
+    padding: 5pt;
+}
+
+.table_header_2 th
+{
+    height: 3em;
+    background-color: #ffffff;
+    padding: 5pt;
+}
+
+tr:nth-child(2n+1) 
+{
+    background-color: #ffffff;
+}
+
+tr:nth-child(2n) {
+    background-color: #ffffff;
+}
+
+tr:hover
+{
+    background-color: #C8D5E3;
+} 
+
+.st1
+{
+    width: 80pt;
+}
+
+.st2
+{
+    width: 80pt;
+    /*border: 1pt solid green;*/
+}
+
+.st3
+{
+width: 250pt;
+}

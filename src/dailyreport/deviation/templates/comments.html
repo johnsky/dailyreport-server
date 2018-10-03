@@ -1,0 +1,17 @@
+
+<ul>
+{% for comment in comments %}
+    <li problemid="{{ comment.problem_id }}" style="list-style-type: none; padding: 15px;" 
+        onmouseover="this.style.borderLeft='solid 5px #084ca6'; this.style.paddingLeft='10px';" 
+        onmouseout="this.style.border='none'; this.style.paddingLeft='15px';">
+        <p>
+            <hr>
+            <p><b>Дата</b>: {{ comment.date }}</p>
+            <p><b>Автор</b>: {{ comment.author }}</p>
+            <p><b>Состояние</b>: {{ comment.state }}</p>
+            <hr>
+            <div>{{ comment.text }}</div>
+        </p>
+    </li>
+{% endfor %}
+</ul>

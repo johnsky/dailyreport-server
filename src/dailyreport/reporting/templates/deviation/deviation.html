@@ -1,0 +1,113 @@
+{% load custom %}
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title> {{ report_title }} </title>
+    <style type="text/css">
+        body
+        {
+            margin: 10pt;
+        }
+
+        #report_title
+        {
+            font-weight: bold;
+            /*text-align: center;*/
+            font-size: large;
+        }
+
+        table
+        {
+            /*width: 2000px;*/
+            margin: 10pt;
+            border-spacing: 1px;
+            border-collapse: collapse;
+            border-style: inset;
+            border-color: #CCCCCC;
+        }
+        
+        table td 
+        {
+            /*background-color: white;*/
+            border-style: inset;
+            padding: 5px;
+            border-width: 1px;
+            border-color: #CCCCCC;
+            vertical-align: middle;
+        }
+
+        table th 
+        {
+            /*background-color: white;*/
+            border-style: inset;
+            padding: 5px;
+            border-width: 1px;
+            border-color: #CCCCCC;
+            font-size: medium;
+            font-weight: bold;
+            height: 3em;
+        }
+        
+        .reddish{background-color: #FF963B;width:100%}
+        .red{background-color: #FF230A;width:100%}
+        .brown{background-color: #78471C;width:100%}        
+        .totals td{font-weight:bold;}
+        
+        .center
+        {
+          text-align:center;
+        }
+        
+        .date_row
+        {
+          font-weight: bold;
+          height: 3em;
+        }
+        
+    </style>
+
+</head>
+<body>
+  <h1 id="report_title">{{report_title}}</h1>
+  {% autoescape off %}
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Филиал</th>
+        <th>Тепловой район</th> 
+        <th>Котельная</th>
+        <th>Дата начала</th>
+        <th>Состояние</th>
+        <th>Ресурс</th>
+        <th>Длительность</th>
+        <th>План</th>
+        <th>Факт</th>
+        <th>Комментарии</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        {% if item.row_id == 1 %}
+          <td class="center" rowspan="{{item.row_span}}">{{ item.id }}</td>
+          <td class="center" rowspan="{{item.row_span}}">{{ item.branch_name }}</td>
+          <td class="center" rowspan="{{item.row_span}}">{{ item.thermal_name }}</td>
+          <td class="center" rowspan="{{item.row_span}}">{{ item.boiler_name }}</td>
+          <td class="center" rowspan="{{item.row_span}}">{{ item.start_date }}</td>
+          <td class="center" rowspan="{{item.row_span}}">{{ item.state_name }}</td>
+          <td class="center" rowspan="{{item.row_span}}">{{ item.resource_name }}</td>
+          <td class="center" rowspan="{{item.row_span}}">{{ item.duration }}</td>
+          <td class="center" rowspan="{{item.row_span}}">{{ item.plan|float_delimeter:report_delimiter }}</td>
+          <td class="center" rowspan="{{item.row_span}}">{{ item.actual|float_delimeter:report_delimiter }}</td>
+        {% endif%}
+        <td style="width: 500px"> {{item.comment}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endautoescape %}
+  
+</body>
+</html>
